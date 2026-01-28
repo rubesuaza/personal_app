@@ -1,0 +1,75 @@
+﻿@if (ShowModal)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Libro</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <EditForm Model="Book" OnValidSubmit="@SaveChanges">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                <div class="modal-body">                    
+                        <!-- Título -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título</label>
+                            <InputText id="title" class="form-control" @bind-Value="Book.Title" placeholder="Ingrese el título del libro" />
+                            <ValidationMessage For="@(() => Book.Title)" class="text-danger small" />
+                        </div>
+                        <!-- Autor -->
+                        <div class="md-3">
+                            <label for="author" class="form-label">Autor</label>
+                            <InputText id="author" class="form-control" @bind-Value="Book.Author" placeholder="Ingrese el nombre del autor" />
+                            <ValidationMessage For="@(() => Book.Author)" class="text-danger small" />
+                        </div>
+                        <!-- Precio -->
+                        <div class="md-3">
+                            <label for="price" class="form-label">Precio</label>
+                            <InputNumber id="price" class="form-control" @bind-Value="Book.Price" />
+                            <ValidationMessage For="@(() => Book.Price)" class="text-danger small" />
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="md-3">
+                            <label for="status" class="form-label">Estado</label>
+                            <InputSelect id="status" class="form-select" @bind-Value="Book.Status">                                
+                                <option value="leido">Leído</option>
+                                <option value="no_leido">No Leído</option>
+                                <option value="en_proceso">En Proceso</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => Book.Status)" class="text-danger small" />
+                        </div>
+                        <!-- In Stock -->
+                        <div class="md-3 d-flex align-items-center">
+                            <div class="form-check">
+                                <InputCheckbox id="inStock" class="form-check-input" @bind-Value="Book.InStock" />
+                                <label class="form-check-label ms-2" for="inStock">¿Lo tengo?</label>
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <label for="image" class="form-label">Imagen</label>
+                        <InputFile id="image" OnChange="HandleImageUpload" />
+                        <p class="text-danger">@errorMessage</p>
+
+                        @if (!string.IsNullOrEmpty(Book.ImagePath))
+                        {
+                            <div class="mt-2">
+
+                                <button type="button" class="btn btn-danger btn-sm mt-2" @onclick="DiscardImage">Descartar</button>
+                            </div>
+                        }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+

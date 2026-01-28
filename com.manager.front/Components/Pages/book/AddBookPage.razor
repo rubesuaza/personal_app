@@ -1,0 +1,98 @@
+﻿@page "/form_add_book"
+
+<h3>Anexar Libro</h3>
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Anexar Libro</h3>
+        </div>
+        <div class="card-body">
+            <EditForm Model="book" OnValidSubmit="@AddBook">
+                <DataAnnotationsValidator />
+                <ValidationSummary/>
+                <div class="row g-3">
+                    <!-- Título -->
+                    <div class="col-md-6">
+                        <label for="title" class="form-label">Título</label>
+                        <InputText id="title" class="form-control" @bind-Value="book.Title"  @oninput="CheckTitle" placeholder="Ingrese el título del libro" />
+                        <ValidationMessage For="@(() => book.Title)" class="text-danger small" />
+                        @if (!string.IsNullOrEmpty(existingBooksMessage))
+                        {
+                            <div class="text-danger small">@existingBooksMessage</div>
+                        }
+                    </div>
+
+                    <!-- Autor -->
+                    <div class="col-md-6">
+                        <label for="author" class="form-label">Autor</label>
+                        <InputText id="author" class="form-control" @bind-Value="book.Author" placeholder="Ingrese el nombre del autor" />
+                        <ValidationMessage For="@(() => book.Author)" class="text-danger small" />
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-md-12">
+                        <label for="description" class="form-label">Descripción</label>
+                        <InputTextArea id="description" class="form-control" @bind-Value="book.Description" rows="4" placeholder="Ingrese una descripción del libro" />
+                        <ValidationMessage For="@(() => book.Description)" class="text-danger small" />
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="col-md-4">
+                        <label for="price" class="form-label">Precio</label>
+                        <InputNumber id="price" class="form-control" @bind-Value="book.Price" />
+                        <ValidationMessage For="@(() => book.Price)" class="text-danger small" />
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Estado</label>
+                        <InputSelect id="status" class="form-select" @bind-Value="book.Status">
+                            <option value="">Seleccione el estado</option>
+                            <option value="leido">Leído</option>
+                            <option value="no_leido">No Leído</option>
+                            <option value="en_proceso">En Proceso</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => book.Status)" class="text-danger small" />
+                    </div>
+
+                    <!-- In Stock -->
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="form-check">
+                            <InputCheckbox id="inStock" class="form-check-input" @bind-Value="book.InStock" />
+                            <label class="form-check-label ms-2" for="inStock">¿Lo tengo?</label>
+                        </div>
+                    </div>
+
+                    <!-- Image -->
+                    <div class="col-md-4">
+                    <label for="image" class="form-label">Imagen</label>
+                    <InputFile id="image" OnChange="HandleImageUpload" />
+                    <p class="text-danger">@errorMessage</p>
+
+                    @if (!string.IsNullOrEmpty(book.ImagePath))
+                    {
+                        <div class="mt-2">
+                           
+                            <button type="button" class="btn btn-danger btn-sm mt-2" @onclick="DiscardImage">Descartar</button>
+                        </div>
+                    }
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success" disabled="@(isTitleInvalid || !isImageValid)">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-success" disabled="@(isTitleInvalid || !isImageValid)" @onclick="AddAndExit">
+                        <i class="fas fa-save"></i> Guardar Y Salir
+                    </button>
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel">
+                        <i class="fas fa-times"></i> Volver
+                    </button>
+                </div>
+            </EditForm>         
+        </div>
+    </div>
+</div>

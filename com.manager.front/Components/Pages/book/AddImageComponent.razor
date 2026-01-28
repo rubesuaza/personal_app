@@ -1,0 +1,37 @@
+﻿@if (ShowModal)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Descripcion @Book.Title</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <EditForm Model="Book" OnValidSubmit="@SaveChanges">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="modal-body">
+                        <!-- Image -->
+                        <label for="image" class="form-label">Imagen</label>
+                        <InputFile id="image" OnChange="HandleImageUpload" />
+                        <p class="text-danger">@errorMessage</p>
+
+                        @if (!string.IsNullOrEmpty(Book.ImagePath))
+                        {
+                            <div class="mt-2">
+
+                                <button type="button" class="btn btn-danger btn-sm mt-2" @onclick="DiscardImage">Descartar</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}

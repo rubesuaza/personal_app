@@ -1,0 +1,183 @@
+﻿@page "/library"
+
+<h3>Administración de Libros</h3>
+<div class="container">
+    <div class="row">
+        <!-- Contenedor de la información del libro en proceso -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Libro en Proceso</h5>
+                </div>
+                <div class="card-body">
+                    @if (CurrentBookInProcess != null)
+                    {
+                        <h5>@CurrentBookInProcess.Title</h5>
+                        <p>@CurrentBookInProcess.Description</p>
+                        <p><strong>Autor:</strong> @CurrentBookInProcess.Author</p>
+                        <button class="btn btn-primary btn-sm me-2" @onclick="() => OpenDescriptionModal(CurrentBookInProcess)">
+                            <i class="fas fa-edit"></i>
+                            @(String.IsNullOrEmpty(CurrentBookInProcess.Description) ? "Agregar Descripción" : "Modificar Descripción")
+                        </button>
+                        <button class="btn btn-primary btn-sm me-2" @onclick="() => ChangeToRead(CurrentBookInProcess)">
+                            <i class="fas fa-edit"></i>
+                                Actualizar a estado leido
+                        </button>
+                    }
+                    else
+                    {
+                        <p>No hay ningún libro en proceso.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor de la imagen y el botón -->
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            @if (CurrentBookInProcess != null && !string.IsNullOrEmpty(CurrentBookInProcess.ImagePath))
+            {
+                <img src="@CurrentBookInProcess.ImagePath"
+                alt="Portada del libro"
+                class="img-fluid rounded"
+                style="max-width: 300px; height: auto;" />
+            }
+            else
+            {
+                <p>No hay imagen disponible.</p>
+            }
+
+            <!-- Botón debajo de la imagen -->
+            @if (CurrentBookInProcess != null)
+            {
+                <button class="btn btn-primary btn-sm mt-3"
+                @onclick="() => OpenImageModal(CurrentBookInProcess)">
+                <i class="fas fa-edit"></i> @((CurrentBookInProcess?.ImagePath != null) ? "Cambiar Imagen" : "Agregar Imagen")
+                </button>
+            }
+        </div>
+
+        <!-- Botón flotante para seleccionar un libro aleatorio -->
+        <a class="btn-floating btn-random" title="Seleccionar libro aleatorio" @onclick="OpenSelectRandomBookModal">
+            <i class="fas fa-random"></i>
+        </a>
+
+        <!-- Botón flotante -->
+        <a href="/form_add_book" class="btn-floating" title="Anexar libro">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Tabla de Lista de Libros -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h5>Lista de Libros</h5>
+
+            @if (errorMessage != null)
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
+            else{
+                @if (Books == null || !Books.Any())
+                {
+                    <p>Cargando libros...</p>
+                }
+                else
+                {
+                    <!-- Barra de búsqueda con filtro de estados -->
+                    <div class="mb-3 d-flex align-items-center gap-2">
+                        <!-- Input de búsqueda -->
+                        <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Buscar por título o autor..." class="form-control w-50" />
+
+                        <!-- Filtro de estado -->
+                        <select class="form-select w-25" @bind="SelectedStatus">
+                            <option value="">Todos los Estados</option>
+                            <option value="leido">Leído</option>
+                            <option value="no_leido">No Leído</option>
+                            <option value="en_proceso">En Proceso</option>
+                        </select>
+
+                        <!-- Filtro de lo tengo -->
+                        <select class="form-select w-25" @bind="SelectedInStock">
+                            <option value="">Todos en lista </option>
+                            <option value="true">Lo tengo</option>
+                            <option value="false">No lo tengo</option>                            
+                        </select>
+
+
+                        <!-- Botón de búsqueda -->
+                        <button class="btn btn-primary" @onclick="FilterBooks">Buscar</button>
+                    </div>
+
+                    <!-- Tabla con barra lateral para desplazamiento -->
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Título</th>                                
+                                    <th>Autor</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Lo tengo?</th>
+                                    <th class="text-center" >Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var book in PaginatedBooks)
+                                {
+                                    <tr>
+                                        <td>@book.Title</td>                                   
+                                        <td>@book.Author</td>
+                                        <td>@book.Price.ToString("C")</td>
+                                        <td>
+                                            @(book.Status == "leido" ? "Leído" : 
+                                                book.Status == "no_leido" ? "No Leído" : "En Proceso")
+                                        </td>
+                                    <td>@(book.InStock?"Si":"No")</td>
+                                        <td class="text-center align-middle">
+                                            <button class="btn btn-primary btn-sm me-2" @onclick="() => OpenEditModal(book)">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => Delete(book)">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                            <a href="/book-detail/@book.Id" class="btn btn-info btn-sm me-2">
+                                                <i class="fas fa-search"></i> 
+                                            </a>
+                                        </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <EditBookComponent ShowModal="showEditModal" Book="selectedBook" OnClose="CloseEditModal" OnSave="SaveBookChanges" />
+                <AddImageComponent ShowModal="showImageModal" Book="selectedBook" OnClose="CloseImageModal" OnSave="SaveBookChanges" />
+                <AddDescriptionComponent ShowModal="showDescriptionModal" Book="selectedBook"  OnClose="CloseDescriptionModal" OnSave="SaveBookChanges" />
+                <SelectBookRandomComponent ShowRouletteModal="showSelectRandomBookModal" UnreadBooks="UnReadBooks" OnClose="CloseSelectBook" />
+
+                <!-- Paginación -->
+                <nav aria-label="Paginación">
+                    <ul class="pagination justify-content-center mt-3">
+                        <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
+                            <button class="page-link" @onclick="GoToPreviousPage">Anterior</button>
+                        </li>
+                        <li class="page-item">
+                            <span class="page-link">Página @pagination.CurrentPage de @pagination.TotalPages
+                                <br />
+                                    @(PaginatedBooks?.ToList().Count ?? 0) de @pagination.CountItems Libros
+                            </span>
+                        </li>
+                        <li class="page-item @(pagination.CurrentPage == pagination.TotalPages ? "disabled" : "")">
+                            <button class="page-link" @onclick="GoToNextPage">Siguiente</button>
+                        </li>
+                    </ul>
+                </nav>
+            }}
+        </div>
+        
+    </div>
+
+</div>

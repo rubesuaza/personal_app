@@ -1,0 +1,31 @@
+﻿@if (ShowModal)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Calificación @Book.Title</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <EditForm Model="Book" OnValidSubmit="@SaveChanges">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="modal-body">
+                        <!-- Descripción -->
+                        <div class="col-md-12">
+                            <label for="raiting" class="form-label">Opinión Personal</label>
+                            <InputNumber id="raiting" class="form-control" @bind-Value="Book.Raiting" rows="4" />
+                            <ValidationMessage For="@(() => Book.Raiting)" class="text-danger small" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}

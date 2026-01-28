@@ -1,0 +1,27 @@
+﻿@if (ShowRouletteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Seleccionar Libro Aleatorio</h5>
+                    <button type="button" class="btn-close" @onclick="CloseRouletteModal"></button>
+                </div>
+                <div class="modal-body d-flex flex-column align-items-center">
+                    <canvas id="wheelCanvas" width="550" height="550"></canvas>
+                    <!-- Indicador -->
+                    <div style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); width: 0; height: 0;
+                                border-left: 10px solid transparent;
+                                border-right: 10px solid transparent;
+                                border-top: 30px solid black;">
+                    </div>
+                    <button class="btn btn-success mt-3" @onclick="SpinWheel">Girar Ruleta</button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseRouletteModal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

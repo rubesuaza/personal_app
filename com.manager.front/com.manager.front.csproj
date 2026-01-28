@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\js\winwheel\**" />
+    <Content Remove="wwwroot\js\winwheel\**" />
+    <EmbeddedResource Remove="wwwroot\js\winwheel\**" />
+    <None Remove="wwwroot\js\winwheel\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\com.manager.front.model\com.manager.front.model.csproj" />
+    <ProjectReference Include="..\com.manager.front.service.file\com.manager.front.service.file.csproj" />
+    <ProjectReference Include="..\com.manager.front.service\com.manager.front.service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+</Project>
